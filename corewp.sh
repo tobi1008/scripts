@@ -20,12 +20,12 @@ while true; do
         file_name="wordpress-latest.zip"
         echo "📌 Không nhập phiên bản. Mặc định tải về bản mới nhất!"
         break
-    elif echo "$versions" | grep -q "^$version$"; then
+    elif curl --head --silent --fail "https://downloads.wordpress.org/release/wordpress-${version}-no-content.zip" > /dev/null; then
         url="https://downloads.wordpress.org/release/wordpress-${version}-no-content.zip"
         file_name="wordpress-${version}-no-content.zip"
         break
     else
-        echo "❌ Phiên bản không hợp lệ! Vui lòng nhập lại một trong các phiên bản có sẵn."
+        echo "❌ Phiên bản không hợp lệ hoặc không tồn tại! Vui lòng nhập lại một phiên bản hợp lệ."
     fi
 done
 
@@ -36,6 +36,15 @@ wget -c "$url" -O "$file_name"
 # Kiểm tra tải xuống có thành công không
 if [[ $? -eq 0 ]]; then
     echo "✅ Tải về thành công: $file_name"
+    
+    # Giải nén và ghi đè nội dung vào thư mục hiện tại
+    echo "📂 Đang giải nén..."
+    unzip -o "$file_name" -d ./
+    mv wordpress/* ./ && rmdir wordpress
+    
+    # Xóa file zip sau khi giải nén
+    rm "$file_name"
+    echo "✅ Giải nén hoàn tất và dữ liệu đã được cập nhật!"
 else
     echo "❌ Lỗi! Không thể tải về. Vui lòng kiểm tra lại version đã nhập."
 fi
