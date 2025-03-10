@@ -7,7 +7,8 @@ sudo apt update -y && sudo apt upgrade -y
 echo "Cài đặt Apache2..."
 sudo apt install apache2 -y
 sudo systemctl enable apache2
-
+sudo a2enmod auth_digest
+sudo systemctl restart apache2
 # Chuyển đến thư mục /var/www/html
 echo "Tạo file index.html và thư mục digest..."
 cd /var/www/html/
